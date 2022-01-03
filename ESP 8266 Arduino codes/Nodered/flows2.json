@@ -1,0 +1,577 @@
+[
+    {
+        "id": "5a8574d5.f0d77c",
+        "type": "tab",
+        "label": "Sol pan mon server",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "78910be9.71c8b4",
+        "type": "serial in",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "serial": "5685ee62.7e66f",
+        "x": 130,
+        "y": 40,
+        "wires": [
+            [
+                "4aa4c4f7.c3cd9c"
+            ]
+        ]
+    },
+    {
+        "id": "4aa4c4f7.c3cd9c",
+        "type": "json",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 350,
+        "y": 120,
+        "wires": [
+            [
+                "9eaad65e.7a1be8"
+            ]
+        ]
+    },
+    {
+        "id": "9eaad65e.7a1be8",
+        "type": "join",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "14",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 530,
+        "y": 160,
+        "wires": [
+            [
+                "60f4e103.60a8e"
+            ]
+        ]
+    },
+    {
+        "id": "60f4e103.60a8e",
+        "type": "function",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "func": "var temperature = 0.0;\nvar humidity = 0.0;\nvar airQuality = 0;\nfor(var i=0; i<msg.payload.length; i++){\n    temperature+=msg.payload[i].temperature;\n    humidity+=msg.payload[i].humidity;\n    airQuality+=msg.payload[i].airQuality;\n}\ntemperature = temperature/msg.payload.length;\nhumidity = humidity/msg.payload.length;\nairQuality = airQuality/msg.payload.length;\n\n\nmsg.payload = {\n    \"windows\":flow.get('windows'),\n    \"nb_person\":flow.get('nb'),\n    \"temperature\":temperature.toFixed(2),\n    \"humidity\":humidity.toFixed(2),\n    \"airQuality\":airQuality.toFixed(0)\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 530,
+        "y": 220,
+        "wires": [
+            [
+                "1b688942.baa0a7"
+            ]
+        ]
+    },
+    {
+        "id": "3c526439.2ab34c",
+        "type": "influxdb out",
+        "z": "5a8574d5.f0d77c",
+        "influxdb": "aee23fa9.edbc4",
+        "name": "",
+        "measurement": "envParameters",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 830,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "6f3791f3.7f0d7",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "3,open",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 110,
+        "y": 240,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "178ce132.63ed4f",
+        "type": "function",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 390,
+        "y": 220,
+        "wires": [
+            [
+                "795f4e98.9cab1"
+            ]
+        ]
+    },
+    {
+        "id": "795f4e98.9cab1",
+        "type": "split",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "splt": ",",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 710,
+        "y": 420,
+        "wires": [
+            [
+                "d6394a94.3d0cf8"
+            ]
+        ]
+    },
+    {
+        "id": "d6394a94.3d0cf8",
+        "type": "join",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 690,
+        "y": 480,
+        "wires": [
+            [
+                "cb7581fe.8ca24"
+            ]
+        ]
+    },
+    {
+        "id": "cb7581fe.8ca24",
+        "type": "function",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "func": "var windows = flow.get('windows')||\"closed\";\nvar nb = flow.get('nb')||0;\nflow.set('windows', msg.payload[1]);\nflow.set('nb', msg.payload[0]);\nmsg.payload = {};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 850,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e5e5ccf4.c066a",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "2,open",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 90,
+        "y": 280,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "ed2b0986.15e7d8",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "1,open",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 130,
+        "y": 320,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "69bdea9f.4998f4",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "0,open",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 130,
+        "y": 360,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "ba2f6c7d.b96af",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "3,closed",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 60,
+        "y": 520,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "3007a5c7.fa8dda",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "2,closed",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 560,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "2b593049.24b17",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "1,closed",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 600,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "3fd09a58.be9e36",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "0,closed",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 640,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "17b7d407.6530cc",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "4,open",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 130,
+        "y": 200,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "3edbba2e.3ae4d6",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "5,open",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 130,
+        "y": 160,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "d06e1e3e.edf8e",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "4,closed",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 480,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "ac1259a.79046a8",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "5,closed",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 440,
+        "wires": [
+            [
+                "178ce132.63ed4f"
+            ]
+        ]
+    },
+    {
+        "id": "72a23018.10f508",
+        "type": "inject",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 370,
+        "y": 40,
+        "wires": [
+            [
+                "d9db4d47.719f5"
+            ]
+        ]
+    },
+    {
+        "id": "d9db4d47.719f5",
+        "type": "function",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "func": "msg.query = \"SELECT * FROM envParameters\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 550,
+        "y": 60,
+        "wires": [
+            [
+                "4067de31.43929"
+            ]
+        ]
+    },
+    {
+        "id": "4067de31.43929",
+        "type": "influxdb in",
+        "z": "5a8574d5.f0d77c",
+        "influxdb": "aee23fa9.edbc4",
+        "name": "",
+        "query": "",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 760,
+        "y": 120,
+        "wires": [
+            [
+                "12e503d6.87f1a4"
+            ]
+        ]
+    },
+    {
+        "id": "ef3124c7.7459b",
+        "type": "csv",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": "",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "date,time,airQuality,humidity,nb_person,temperature,windows",
+        "skip": "0",
+        "x": 1010,
+        "y": 220,
+        "wires": [
+            [
+                "ff3e11e8.28f5f"
+            ]
+        ]
+    },
+    {
+        "id": "ff3e11e8.28f5f",
+        "type": "file",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "filename": "/home/pi/data.csv",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 1120,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "12e503d6.87f1a4",
+        "type": "function",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "func": "\nfunction pad(n) {\n    return n<10 ? '0'+n : n;\n}\n\nfor(var i = 0; i<msg.payload.length; i++){\n    var start = new Date(msg.payload[i].time);\n    msg.payload[i].date = pad(start.getDate()) + \"-\" + pad(start.getMonth() + 1) + \"-\" + start.getFullYear();\n    msg.payload[i].time = pad(start.getHours()) + \":\" + pad(start.getMinutes())\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 920,
+        "y": 180,
+        "wires": [
+            [
+                "ef3124c7.7459b",
+                "340ae6d7.3d33aa"
+            ]
+        ]
+    },
+    {
+        "id": "1b688942.baa0a7",
+        "type": "debug",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 670,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "340ae6d7.3d33aa",
+        "type": "debug",
+        "z": "5a8574d5.f0d77c",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 750,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "5685ee62.7e66f",
+        "type": "serial-port",
+        "z": "",
+        "serialport": "/dev/ttyUSB0",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "aee23fa9.edbc4",
+        "type": "influxdb",
+        "z": "",
+        "hostname": "127.0.0.1",
+        "port": "8086",
+        "protocol": "http",
+        "database": "iotDatabase",
+        "name": "",
+        "usetls": false,
+        "tls": ""
+    }
+]

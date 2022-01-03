@@ -1,0 +1,20 @@
+ssh rasp password: tfp__871128
+fqdn = server.pi
+path edit: http://ipaddress:1880/admin
+ui: http://ipaddress:1880/dashboard
+admin: {
+	username: tfpelias
+	password: tamb@871128
+}
+
+user: {
+	username: tfpelias
+	password: tamb@871128
+}
+
+credential secret key: tambatra
+
+rasp wifi mac address:  b8:27:eb:c1:3b:2a
+
+ssid: IotWAP
+pwd: tamb@871128
