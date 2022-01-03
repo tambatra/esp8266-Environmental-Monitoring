@@ -3,5 +3,5 @@ These are arduino codes for 3 esp8266 modules. Module n°1 and n°2 are each con
 Each module collectes and send periodically its data to a remote server (Raspberry Pi) through a Wifi network. MQTT protocol is used as the communication protocol between the module and the server.
 
 Here are photos of each module:
-![](esp8266-/you-picture.png)
+![](ESP$208266$20Arduino$20codes/Screenshot_20210928-183110_Gallery.jpg)
 
